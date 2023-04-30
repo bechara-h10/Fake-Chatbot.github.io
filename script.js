@@ -23,24 +23,20 @@ let minutes = 0
 //  Initialize scrollbar and display fake message on window load
 
 $(window).on('load', function () {
-  // messageContent.mCustomScrollbar()
   setTimeout(fakeMessage, 100)
 })
 
 // Update scrollbar to bottom and add timestamp
 
 function updateScrollbar() {
-  messageContent
-    .mCustomScrollbar('update')
-    .mCustomScrollbar('scrollTo', 'bottom', {
-      scrollInertia: 10,
-      timeout: 0,
-    })
+  messageContent.stop().animate({
+    scrollTop: messageContent.prop('scrollHeight'),
+  })
 }
 
 function addTimestamp() {
   const date = new Date()
-  const minutesNow = date.getMinutes()
+  const minutesNow = String(date.getMinutes()).padStart(2, '0')
   minutes = minutesNow
   const timestamp = $('<div class="timestamp"><div>').text(
     `${date.getHours()}:${minutes}`
@@ -59,12 +55,8 @@ function addMessageToPage(msg, isPersonal = false) {
     message.addClass('new').prepend(figure)
   }
   messageContent.append(message)
-  // $('.mCSB_container').append(message)
   addTimestamp()
-  // updateScrollbar()
-  messageContent.stop().animate({
-    scrollTop: messageContent.prop('scrollHeight'),
-  })
+  updateScrollbar()
 }
 
 // Function to insert user message and trigger fake message after 1 second
@@ -105,11 +97,7 @@ function fakeMessage() {
     .prepend(figure)
     .append($('<span></span> <span></span> <span></span>'))
   messageContent.append(loadingMessage)
-  // $('.mCSB_container').append(loadingMessage)
-  // updateScrollbar()
-  messageContent.stop().animate({
-    scrollTop: messageContent.prop('scrollHeight'),
-  })
+  updateScrollbar()
   setTimeout(function () {
     loadingMessage.remove()
     addMessageToPage(fakeMessages.shift())
